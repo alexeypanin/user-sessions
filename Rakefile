@@ -7,7 +7,7 @@ desc "data import from file and report generation"
 
 task :import_data_and_calc_stats do
   time = Benchmark.measure {
-    parsed_objects = DataParser.new(file_name: './files/data.txt').parse
+    parsed_objects = DataParser.new(file_name: './files/data_large.txt').parse
 
     puts "\nCalculations started.."
 
