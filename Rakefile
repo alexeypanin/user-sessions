@@ -13,7 +13,7 @@ task :import_data_and_calc_stats do
 
     ReportBuilder.new(objects: parsed_objects).call
 
-    puts "Done. Check result.json"
+    puts "Done. Check files/result.json"
   }
 
   puts "Execution time: #{time.real}"

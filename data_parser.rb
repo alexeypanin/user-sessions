@@ -8,7 +8,7 @@ class DataParser
 
   attr_reader :file_name
 
-  def initialize(file_name: '../files/data_large.txt')
+  def initialize(file_name: '../files/data.txt')
     @file_name = file_name
   end
 

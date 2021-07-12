@@ -19,10 +19,10 @@ class ReportBuilder
 
   def call
     sessions = objects[:users].map {|user| user.sessions }.flatten
-    report.merge!(Stats::Browsers.new(sessions: sessions).calculate)
 
+    report.merge!(Stats::Browsers.new(sessions: sessions).calculate)
     report.merge!(Stats::Users.new(users: objects[:users]).calculate)
 
-    File.write('result.json', "#{report.to_json}\n")
+    File.write('./files/result.json', "#{report.to_json}\n")
   end
 end
