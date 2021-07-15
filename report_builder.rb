@@ -16,9 +16,13 @@ class ReportBuilder
   REPORT_FILE_NAME = './files/result.json'.freeze
 
   def initialize(lines_count:)
-    @report = { usersStats: [],'totalUsers': 0,
-                'totalSessions': 0, 'allBrowsers': Set.new }
+    @report = { usersStats: [],
+               'totalUsers': 0,
+               'totalSessions': 0,
+               'allBrowsers': Set.new }
+
     @lines_count = lines_count
+
     prepare_report_file
   end
 

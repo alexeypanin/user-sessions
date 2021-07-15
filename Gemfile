@@ -1,4 +1,10 @@
+source 'https://rubygems.org'
+
 gem 'activesupport'
-gem 'activemodel-associations'
 gem 'benchmark'
 gem 'get_process_mem'
+
+group :test do
+  gem 'rspec'
+  gem 'rspec-collection_matchers'
+end

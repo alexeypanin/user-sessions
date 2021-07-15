@@ -9,7 +9,6 @@ desc "data import from file and report generation"
 
 task :import_data_and_calc_stats do
   time = Benchmark.measure {
-
     mem = GetProcessMem.new
     puts "Memory usage before: #{mem.mb} MB."
 
