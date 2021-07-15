@@ -13,7 +13,7 @@ class DataParser
 
   def initialize(file_name: '../files/data.txt')
     @file_name = file_name
-    @report_builder = ReportBuilder.new
+    @report_builder = ReportBuilder.new(lines_count: lines_count)
   end
 
   # генерируем статистику по ходу считывания файла и записываем

@@ -13,13 +13,13 @@ task :import_data_and_calc_stats do
     mem = GetProcessMem.new
     puts "Memory usage before: #{mem.mb} MB."
 
-    DataParser.new(file_name: './files/data.txt').parse
+    DataParser.new(file_name: './files/data_large.txt').parse
 
-    puts "Done. Check files/result.json"
+    puts "\nDone. Check files/result.json"
 
     mem = GetProcessMem.new
     puts "Memory usage after: #{mem.mb} MB."
   }
 
-  puts "Execution time: #{time}"
+  puts "Execution time: #{time.real}"
 end

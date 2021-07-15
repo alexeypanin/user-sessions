@@ -9,14 +9,16 @@ Dir[File.join(__dir__, 'stats', '*.rb')].each { |file| require file }
 require 'json'
 
 class ReportBuilder
-  attr_reader :objects
+  attr_reader :lines_count
   attr_accessor :report
 
-  BATCH_SIZE = 5_000 # для больших файлов, должен быть меньше кол-ва пользователей
+  MAX_BATCH_SIZE = 5000
   REPORT_FILE_NAME = './files/result.json'.freeze
 
-  def initialize()
-    @report = { usersStats: [],'totalUsers': 0, 'totalSessions': 0 }
+  def initialize(lines_count:)
+    @report = { usersStats: [],'totalUsers': 0,
+                'totalSessions': 0, 'allBrowsers': Set.new }
+    @lines_count = lines_count
     prepare_report_file
   end
 
@@ -25,7 +27,7 @@ class ReportBuilder
   def calc_user_stats user, last_user: false
     report[:usersStats].push(Stats::User.new(user: user).calculate)
 
-    if report[:usersStats].size == BATCH_SIZE
+    if report[:usersStats].size == batch_size
       save_current_batch_to_file(need_comma: !last_user)
     end
 
@@ -50,6 +52,11 @@ class ReportBuilder
 
   private
 
+  def batch_size
+    # из примерного расчета что у пользователя в среднем 10 записей с сессиями
+    @batch ||= [(lines_count / 100.0).ceil, MAX_BATCH_SIZE].min
+  end
+
   # сохранение статистики для партии пользователей
   def save_current_batch_to_file(last_batch: false, need_comma: false)
     json = report[:usersStats].to_json
@@ -71,7 +78,6 @@ class ReportBuilder
   def update_group_stats user
     user_browsers = user.sessions.map {|s| s['browser'].upcase }
 
-    report[:allBrowsers] ||= Set.new
     report[:allBrowsers].merge(user_browsers)
     report[:totalUsers] += 1
     report[:totalSessions] += user.sessions.count
