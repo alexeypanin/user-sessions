@@ -5,7 +5,7 @@ require 'benchmark'
 require 'benchmark/memory'
 require 'get_process_mem'
 
-desc "data import from file and report generation"
+desc 'data import from file and report generation'
 
 task :import_data_and_calc_stats do
   time = Benchmark.measure {

@@ -1,13 +1,13 @@
-require '../data_parser.rb'
+require '../data_parser'
+
+DATA_FILE = './spec/files/test_data.txt'
+RESULT_FILE = './files/result.json'
 
 describe DataParser do
   describe '#parser' do
-    DATA_FILE = './spec/files/test_data.txt'
-    RESULT_FILE = './files/result.json'
-
     context 'when data file is valid' do
       before(:all) do
-        test_data = %Q(
+        test_data = %(
           user,0,Leida,Cira,0
           session,0,0,Safari 29,87,2016-10-23
           user,1,Palmer,Katrina,65
@@ -19,16 +19,16 @@ describe DataParser do
       end
 
       it 'should write report to file' do
-        FileUtils.rm(RESULT_FILE) if File.exists?(RESULT_FILE)
+        FileUtils.rm(RESULT_FILE) if File.exist?(RESULT_FILE)
         DataParser.new(file_name: DATA_FILE).parse
 
-        expect(File.exists?(RESULT_FILE)).to be_truthy
+        expect(File.exist?(RESULT_FILE)).to be_truthy
       end
     end
 
     context 'when data file is invalid' do
       before do
-        test_data = %Q(
+        test_data = %(
           user,0,Leida,Cira,0
           session,0,0,Safari 29,87,2016-10-23
           butterfly,1,White,Lady,0).gsub(/^\s*/, '')

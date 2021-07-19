@@ -4,7 +4,7 @@
 #   - Статистика для браузеров из Stats::Browsers
 #   - Статистика для юзеров из Stats::Users
 
-Dir[File.join(__dir__, 'stats', '*.rb')].each { |file| require file }
+Dir[File.join(__dir__, 'stats', '*.rb')].sort.each { |file| require file }
 
 require 'json'
 
@@ -16,10 +16,12 @@ class ReportBuilder
   REPORT_FILE_NAME = './files/result.json'.freeze
 
   def initialize(lines_count:)
-    @report = { usersStats: [],
-               'totalUsers': 0,
-               'totalSessions': 0,
-               'allBrowsers': Set.new }
+    @report = {
+      'usersStats':    [],
+      'totalUsers':    0,
+      'totalSessions': 0,
+      'allBrowsers':   Set.new
+    }
 
     @lines_count = lines_count
 
@@ -28,7 +30,7 @@ class ReportBuilder
 
   # подсчет статистики для одного пользователя и
   # обновление общей статистики по браузерам и сессиям
-  def calc_user_stats user, last_user: false
+  def calc_user_stats(user, last_user: false)
     report[:usersStats].push(Stats::User.new(user: user).calculate)
 
     if report[:usersStats].size == batch_size
@@ -38,7 +40,7 @@ class ReportBuilder
     update_group_stats(user)
   end
 
-  def calc_last_user_stats user
+  def calc_last_user_stats(user)
     calc_user_stats(user, last_user: true)
     save_current_batch_to_file(last_batch: true)
   end
@@ -51,14 +53,14 @@ class ReportBuilder
     report.delete(:usersStats) # уже в файле со статистикой
 
     text = report.to_json[1..-1]
-    File.open(REPORT_FILE_NAME, 'a') {|f| f << text }
+    File.open(REPORT_FILE_NAME, 'a') { |f| f << text }
   end
 
   private
 
   def batch_size
     # из примерного расчета что у пользователя в среднем 10 записей с сессиями
-    @batch ||= [(lines_count / 100.0).ceil, MAX_BATCH_SIZE].min
+    @batch_size ||= [(lines_count / 100.0).ceil, MAX_BATCH_SIZE].min
   end
 
   # сохранение статистики для партии пользователей
@@ -69,18 +71,18 @@ class ReportBuilder
     text = json[2..-3]
 
     text += ', ' if need_comma
-    text += "}," if last_batch
+    text += '},' if last_batch
 
     # записываем результат в конец файла со статистикой
-    File.open(REPORT_FILE_NAME, 'a') {|f| f << text }
+    File.open(REPORT_FILE_NAME, 'a') { |f| f << text }
 
     # убираем из памяти считанные данные, после записи статистики
     report[:usersStats] = []
   end
 
   # статистика вычисляемая по всем пользователям
-  def update_group_stats user
-    user_browsers = user.sessions.map {|s| s['browser'].upcase }
+  def update_group_stats(user)
+    user_browsers = user.sessions.map { |s| s['browser'].upcase }
 
     report[:allBrowsers].merge(user_browsers)
     report[:totalUsers] += 1
@@ -88,7 +90,7 @@ class ReportBuilder
   end
 
   def prepare_report_file
-    FileUtils.rm(REPORT_FILE_NAME) if File.exists?(REPORT_FILE_NAME)
-    File.open(REPORT_FILE_NAME, 'w') {|f| f.print(%Q({"usersStats":{))}
+    FileUtils.rm(REPORT_FILE_NAME) if File.exist?(REPORT_FILE_NAME)
+    File.open(REPORT_FILE_NAME, 'w') { |f| f.print(%({"usersStats":{)) }
   end
 end

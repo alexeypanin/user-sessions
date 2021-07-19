@@ -1,4 +1,4 @@
-Dir[File.join(__dir__, 'parsers', '*.rb')].each { |file| require file }
+Dir[File.join(__dir__, 'parsers', '*.rb')].sort.each { |file| require file }
 
 require File.join(__dir__, 'report_builder')
 
@@ -6,7 +6,7 @@ require 'active_support'
 require 'active_support/core_ext'
 
 class DataParser
-  PARSERS = %w(user session).freeze
+  PARSERS = %w[user session].freeze
 
   attr_reader :file_name
   attr_accessor :report_builder
@@ -43,7 +43,7 @@ class DataParser
       end
 
       display_progress(i)
-      i+=1
+      i += 1
     end
 
     # в конце записываем статистику которая считается по всем пользователям
@@ -52,7 +52,7 @@ class DataParser
 
   private
 
-  def parser object_name
+  def parser(object_name)
     "Parsers::#{object_name.classify}".constantize
   end
 
@@ -60,14 +60,13 @@ class DataParser
     @l_count ||= `wc -l #{file_name}`.to_i
   end
 
-  def display_progress index
-    progress = ((index).to_f / lines_count * 100).round(2)
+  def display_progress(index)
+    progress = (index.to_f / lines_count * 100).round(2)
     printf("\rImport progress: #{progress}%%")
   end
 
   def check_object_validity!(object_name)
-    unless PARSERS.include?(object_name)
-      raise ArgumentError.new("Parser for object #{object_name} not exists")
-    end
+    return if PARSERS.include?(object_name)
+    raise ArgumentError, "Parser for object #{object_name} not exists"
   end
 end
