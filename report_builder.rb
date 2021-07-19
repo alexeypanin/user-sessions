@@ -82,11 +82,9 @@ class ReportBuilder
 
   # статистика вычисляемая по всем пользователям
   def update_group_stats(user)
-    user_browsers = user.sessions.map { |s| s['browser'].upcase }
-
-    report[:allBrowsers].merge(user_browsers)
-    report[:totalUsers] += 1
+    report[:allBrowsers].merge(user.browsers)
     report[:totalSessions] += user.sessions.count
+    report[:totalUsers] += 1
   end
 
   def prepare_report_file

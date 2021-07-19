@@ -35,26 +35,32 @@ module Stats
       report['sessionsCount'] = user.sessions.count
 
       # Собираем количество времени по пользователям
-      total = user.sessions.map { |s| s['time'].to_i }.sum
-      report['totalTime'] = "#{total} min."
+      report['totalTime'] = "#{session_durations.sum} min."
 
       # Выбираем самую длинную сессию пользователя
-      longest = user.sessions.map { |s| s['time'].to_i }.max
-      report['longestSession'] = "#{longest} min."
+      report['longestSession'] = "#{session_durations.max} min."
 
       # Даты сессий через запятую в обратном порядке в формате iso8601
-      report['dates'] = user.sessions.map { |s| Date.parse(s['date']) }.sort.reverse!.map(&:iso8601)
+      report['dates'] = session_dates.sort!.reverse!.map(&:iso8601)
     end
 
     def browsers_stats
       # Браузеры пользователя через запятую
-      report['browsers'] = user.sessions.map { |s| s['browser'].upcase! }.sort.join(', ')
+      report['browsers'] = user.browsers.sort.join(', ')
 
       # Хоть раз использовал IE?
-      report['usedIE'] = user.sessions.map { |s| s['browser'] }.any? { |b| b.upcase =~ /INTERNET EXPLORER/ }
+      report['usedIE'] = user.browsers.any? { |b| b =~ /INTERNET EXPLORER/ }
 
       # Всегда использовал только Chrome?
-      report['alwaysUsedChrome'] = user.sessions.map { |s| s['browser'] }.all? { |b| b.upcase =~ /CHROME/ }
+      report['alwaysUsedChrome'] = user.browsers.all? { |b| b =~ /CHROME/ }
+    end
+
+    def session_durations
+      @session_durations ||= user.sessions.map { |s| s['time'].to_i }
+    end
+
+    def session_dates
+      @session_dates ||= user.sessions.map { |s| s['date'] }
     end
   end
 end
