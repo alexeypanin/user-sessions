@@ -6,9 +6,11 @@
 
 Dir[File.join(__dir__, 'stats', '*.rb')].sort.each { |file| require file }
 
-require 'json'
+require 'oj'
 
 class ReportBuilder
+
+
   attr_reader :lines_count
   attr_accessor :report
 
@@ -52,7 +54,7 @@ class ReportBuilder
 
     report.delete(:usersStats) # уже в файле со статистикой
 
-    text = report.to_json[1..-1]
+    text = Oj.dump(report)[1..-1]
     File.open(REPORT_FILE_NAME, 'a') { |f| f << text }
   end
 
@@ -65,7 +67,7 @@ class ReportBuilder
 
   # сохранение статистики для партии пользователей
   def save_current_batch_to_file(last_batch: false, need_comma: false)
-    json = report[:usersStats].to_json
+    json = Oj.dump(report[:usersStats])
 
     # добавляем без скобок массива, чтобы в файле добавился в открытый массив
     text = json[2..-3]
