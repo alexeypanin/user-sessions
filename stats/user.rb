@@ -41,7 +41,7 @@ module Stats
       report['longestSession'] = "#{session_durations.max} min."
 
       # Даты сессий через запятую в обратном порядке в формате iso8601
-      report['dates'] = session_dates.sort!.reverse!.map(&:iso8601)
+      report['dates'] = session_dates.sort!.reverse!.map { |d| d.strftime('%Y-%m-%d') }
     end
 
     def browsers_stats
