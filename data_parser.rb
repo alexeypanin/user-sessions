@@ -42,7 +42,7 @@ class DataParser
         report_builder.calc_last_user_stats(current_user)
       end
 
-      display_progress(i)
+      # display_progress(i)
       i += 1
     end
 
@@ -53,7 +53,12 @@ class DataParser
   private
 
   def parser(object_name)
-    "Parsers::#{object_name.classify}".constantize
+    case object_name
+    when 'user'
+      Parsers::User
+    when 'session'
+      Parsers::Session
+    end
   end
 
   def lines_count
