@@ -9,8 +9,6 @@ Dir[File.join(__dir__, 'stats', '*.rb')].sort.each { |file| require file }
 require 'oj'
 
 class ReportBuilder
-
-
   attr_reader :lines_count
   attr_accessor :report
 

@@ -39,7 +39,7 @@ describe DataParser do
       subject { DataParser.new(file_name: DATA_FILE).parse }
 
       it 'should raise error if given unknown object' do
-        expect { subject }.to raise_error('Parser for object butterfly not exists')
+        expect { subject }.to raise_error()
       end
     end
   end

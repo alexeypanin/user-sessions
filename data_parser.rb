@@ -24,7 +24,6 @@ class DataParser
     i = 0
     File.foreach(file_name).each_entry do |line|
       object_name = line.split(',').first
-      check_object_validity!(object_name)
 
       object = parser(object_name).new(line).parse
 
@@ -38,11 +37,10 @@ class DataParser
       end
 
       # считаем статистику для последнего пользователя
-      if i == lines_count || line.blank?
+      if i == lines_count || line.size == 0
         report_builder.calc_last_user_stats(current_user)
       end
 
-      # display_progress(i)
       i += 1
     end
 
@@ -63,15 +61,5 @@ class DataParser
 
   def lines_count
     @l_count ||= `wc -l #{file_name}`.to_i
-  end
-
-  def display_progress(index)
-    progress = (index.to_f / lines_count * 100).round(2)
-    printf("\rImport progress: #{progress}%%")
-  end
-
-  def check_object_validity!(object_name)
-    return if PARSERS.include?(object_name)
-    raise ArgumentError, "Parser for object #{object_name} not exists"
   end
 end
